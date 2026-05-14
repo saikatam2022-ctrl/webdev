@@ -411,3 +411,301 @@ const heroObserver = new IntersectionObserver((entries) => {
 
 const heroTrust = document.querySelector('.hero-trust');
 if (heroTrust) heroObserver.observe(heroTrust);
+
+/* =====================================================
+   HOMEPAGE BUILDER — 5-Step Intake Form
+   ===================================================== */
+
+(function () {
+  // ── State ──
+  let hbCur = 1;
+  const HB_TOTAL = 5;
+  const hbNiches   = [];
+  const hbTypes    = [];
+  const hbTones    = [];
+  const hbColors   = [];
+  const hbFonts    = [];
+  const hbSections = ['hero'];   // hero pre-selected
+  const hbContent  = [];
+
+  // ── Choice toggle (Builder vs Direct Quote) ──
+  window.showChoice = function (which) {
+    document.getElementById('choice-builder').classList.toggle('choice-active', which === 'builder');
+    document.getElementById('choice-quote').classList.toggle('choice-active', which === 'quote');
+    document.getElementById('builder-panel').style.display = which === 'builder' ? 'block' : 'none';
+    document.getElementById('quote-panel').style.display   = which === 'quote'   ? 'block' : 'none';
+  };
+
+  // ── Generic selection handler ──
+  function hbSel(gridId, arr, multi) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.querySelectorAll('[data-val]').forEach(el => {
+      // Pre-mark already selected
+      if (arr.includes(el.dataset.val)) el.classList.add('selected');
+      el.addEventListener('click', () => {
+        const v = el.dataset.val;
+        if (!multi) {
+          grid.querySelectorAll('[data-val]').forEach(x => x.classList.remove('selected'));
+          arr.length = 0;
+          el.classList.add('selected');
+          arr.push(v);
+          if (gridId === 'hb-niche-grid') {
+            document.getElementById('hb-custom-niche-field').style.display = v === 'other' ? 'block' : 'none';
+          }
+        } else {
+          if (el.classList.contains('selected')) {
+            el.classList.remove('selected');
+            const i = arr.indexOf(v);
+            if (i > -1) arr.splice(i, 1);
+            const chk = el.querySelector('.hb-fcheck');
+            if (chk) chk.textContent = '';
+          } else {
+            el.classList.add('selected');
+            arr.push(v);
+            const chk = el.querySelector('.hb-fcheck');
+            if (chk) chk.textContent = '✓';
+          }
+        }
+      });
+    });
+  }
+
+  // ── Colour swatches ──
+  function hbInitSwatches() {
+    const wrap = document.getElementById('hb-color-swatches');
+    if (!wrap) return;
+    wrap.querySelectorAll('.hb-swatch').forEach(sw => {
+      sw.addEventListener('click', () => {
+        const v = sw.dataset.val;
+        if (sw.classList.contains('selected')) {
+          sw.classList.remove('selected');
+          const i = hbColors.indexOf(v);
+          if (i > -1) hbColors.splice(i, 1);
+        } else {
+          if (hbColors.length >= 3) { hbShowToast('Max 3 colours!'); return; }
+          sw.classList.add('selected');
+          hbColors.push(v);
+        }
+      });
+    });
+  }
+
+  window.hbAddCustomColor = function (val) {
+    const wrap = document.getElementById('hb-custom-swatch-wrap');
+    wrap.style.background = val;
+    wrap.querySelector('span').style.display = 'none';
+    if (!hbColors.includes('custom')) hbColors.push('custom');
+  };
+
+  // ── Char counter ──
+  window.hbCount = function (el, id) {
+    const max = el.getAttribute('maxlength');
+    const span = document.getElementById(id);
+    if (span) span.textContent = el.value.length + '/' + max;
+  };
+
+  // ── Toast ──
+  function hbShowToast(msg) {
+    const t = document.getElementById('hb-toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── Validation ──
+  function hbValidate() {
+    if (hbCur === 1) {
+      if (!hbNiches.length) { hbShowToast('Please select your niche'); return false; }
+      if (hbNiches[0] === 'other' && !document.getElementById('hb-custom-niche').value.trim()) {
+        hbShowToast('Please describe your niche'); return false;
+      }
+      if (!document.getElementById('hb-biz-name').value.trim())     { hbShowToast('Business name required'); return false; }
+      if (!document.getElementById('hb-contact-name').value.trim()) { hbShowToast('Your name required'); return false; }
+      if (!document.getElementById('hb-biz-email').value.trim())    { hbShowToast('Email required'); return false; }
+      if (!document.getElementById('hb-biz-desc').value.trim())     { hbShowToast('Business description required'); return false; }
+    }
+    if (hbCur === 2) {
+      if (!document.getElementById('hb-primary-goal').value)             { hbShowToast('Please select a primary goal'); return false; }
+      if (!document.getElementById('hb-target-audience').value.trim())   { hbShowToast('Target audience required'); return false; }
+    }
+    if (hbCur === 4) {
+      if (!document.getElementById('hb-hero-headline').value.trim()) { hbShowToast('Hero headline required'); return false; }
+    }
+    return true;
+  }
+
+  // ── Progress update ──
+  function hbUpdateProgress() {
+    const pct = ((hbCur - 1) / (HB_TOTAL - 1)) * 100;
+    const fill = document.getElementById('hb-fill');
+    if (fill) fill.style.width = pct + '%';
+
+    for (let i = 1; i <= HB_TOTAL; i++) {
+      const dot = document.getElementById('hb-dot-' + i);
+      const lbl = document.getElementById('hb-lbl-' + i);
+      if (!dot || !lbl) continue;
+      dot.classList.remove('active', 'done');
+      lbl.classList.remove('active', 'done');
+      if (i < hbCur)      { dot.classList.add('done'); dot.textContent = '✓'; lbl.classList.add('done'); }
+      else if (i === hbCur){ dot.classList.add('active'); dot.textContent = i; lbl.classList.add('active'); }
+      else                  { dot.textContent = i; }
+    }
+
+    const counter = document.getElementById('hb-step-counter');
+    if (counter) counter.textContent = 'Step ' + hbCur + ' of ' + HB_TOTAL;
+
+    const prevBtn = document.getElementById('hb-btn-prev');
+    if (prevBtn) prevBtn.style.visibility = hbCur > 1 ? 'visible' : 'hidden';
+
+    // Swap Next → Submit on last step
+    const nextBtn = document.getElementById('hb-btn-next');
+    if (nextBtn) {
+      if (hbCur === HB_TOTAL) {
+        nextBtn.textContent = '✔ Submit Brief';
+        nextBtn.className = 'hb-btn-submit';
+        nextBtn.onclick = hbSubmit;
+      } else {
+        nextBtn.textContent = 'Next →';
+        nextBtn.className = 'hb-btn-next';
+        nextBtn.onclick = () => hbGo(1);
+      }
+    }
+  }
+
+  // ── Navigate ──
+  window.hbGo = function (dir) {
+    if (dir === 1 && !hbValidate()) return;
+    document.getElementById('hb-p' + hbCur).classList.remove('active');
+    hbCur += dir;
+    document.getElementById('hb-p' + hbCur).classList.add('active');
+    if (hbCur === HB_TOTAL) hbBuildSummary();
+    hbUpdateProgress();
+    // Scroll builder into view smoothly
+    const section = document.getElementById('homepage-builder');
+    if (section) {
+      const top = section.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
+
+  // ── Build summary ──
+  function hbBuildSummary() {
+    const g = (id) => { const el = document.getElementById(id); return el ? el.value : '—'; };
+    const trunc = (s, n) => s.length > n ? s.substring(0, n) + '…' : (s || '—');
+
+    const groups = [
+      ['Business', {
+        'Niche':       hbNiches.join(', ') || '—',
+        'Business':    g('hb-biz-name'),
+        'Contact':     g('hb-contact-name'),
+        'Email':       g('hb-biz-email'),
+        'Description': trunc(g('hb-biz-desc'), 100),
+      }],
+      ['Goals & Audience', {
+        'Site type':      hbTypes.join(', ') || '—',
+        'Primary goal':   g('hb-primary-goal'),
+        'Audience':       trunc(g('hb-target-audience'), 80),
+        'USPs':           trunc(g('hb-usps'), 80),
+      }],
+      ['Brand & Design', {
+        'Tone':       hbTones.join(', ')  || '—',
+        'Colours':    hbColors.join(', ') || '—',
+        'Font style': hbFonts.join(', ')  || '—',
+        'Font names': g('hb-font-names'),
+      }],
+      ['Content & Copy', {
+        'Sections':  hbSections.join(', ') || '—',
+        'Headline':  g('hb-hero-headline'),
+        'Tagline':   g('hb-hero-sub'),
+        'CTA':       g('hb-cta1'),
+        'Have':      hbContent.join(', ') || '—',
+      }],
+    ];
+
+    let html = '';
+    groups.forEach(([title, obj]) => {
+      html += '<div class="hb-summary-card"><h4>' + title + '</h4>';
+      Object.entries(obj).forEach(([k, v]) => {
+        html += '<div class="hb-summary-row"><span class="hb-sk">' + k + '</span><span class="hb-sv">' + (v || '—') + '</span></div>';
+      });
+      html += '</div>';
+    });
+    const area = document.getElementById('hb-summary-area');
+    if (area) area.innerHTML = html;
+  }
+
+  // ── Submit ──
+  function hbSubmit() {
+    const g = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+    const data = {
+      niche:          hbNiches[0] === 'other' ? g('hb-custom-niche') : (hbNiches[0] || ''),
+      businessName:   g('hb-biz-name'),
+      contact:        g('hb-contact-name'),
+      email:          g('hb-biz-email'),
+      existingUrl:    g('hb-existing-url'),
+      description:    g('hb-biz-desc'),
+      siteType:       hbTypes[0]   || '',
+      primaryGoal:    g('hb-primary-goal'),
+      targetAudience: g('hb-target-audience'),
+      painPoint:      g('hb-pain-point'),
+      competitors:    g('hb-competitors'),
+      usps:           g('hb-usps'),
+      tones:          hbTones,
+      colors:         hbColors,
+      fontStyle:      hbFonts[0]   || '',
+      fontNames:      g('hb-font-names'),
+      inspoUrl:       g('hb-inspo-url'),
+      visualNotes:    g('hb-visual-notes'),
+      sections:       hbSections,
+      heroHeadline:   g('hb-hero-headline'),
+      heroSub:        g('hb-hero-sub'),
+      cta1:           g('hb-cta1'),
+      cta2:           g('hb-cta2'),
+      years:          g('hb-years'),
+      clients:        g('hb-clients'),
+      achievements:   g('hb-achievements'),
+      contentReady:   hbContent,
+      extraNotes:     g('hb-extra-notes'),
+      finalNotes:     g('hb-final-notes'),
+    };
+
+    // POST to backend (same endpoint as contact form)
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, source: 'homepage-builder', business_type: data.niche, name: data.contact, phone: '' }),
+    }).catch(() => {}); // silent fail — show success regardless
+
+    // Show success state
+    const wrap = document.querySelector('.builder-form-wrap');
+    if (wrap) {
+      wrap.innerHTML = `
+        <div class="hb-success">
+          <div class="hb-success-icon">✅</div>
+          <h3>Brief received!</h3>
+          <p>Thanks, <strong style="color:var(--accent)">${data.contact || 'there'}</strong>. We'll review your homepage brief and send a custom plan to <strong style="color:var(--accent)">${data.email}</strong> within 24 hours.</p>
+          <a href="#" class="btn btn-primary" style="margin:0 auto">Back to Homepage</a>
+        </div>`;
+    }
+  }
+
+  // ── Init (runs after DOM ready) ──
+  function hbInit() {
+    hbSel('hb-niche-grid',   hbNiches,   false);
+    hbSel('hb-type-grid',    hbTypes,    false);
+    hbSel('hb-font-grid',    hbFonts,    false);
+    hbSel('hb-tone-grid',    hbTones,    true);
+    hbSel('hb-section-grid', hbSections, true);
+    hbSel('hb-content-grid', hbContent,  true);
+    hbInitSwatches();
+    hbUpdateProgress();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hbInit);
+  } else {
+    hbInit();
+  }
+})();
