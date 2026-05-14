@@ -299,129 +299,164 @@
 }
 
 /* =====================================================
-   INNER PAGES — Full Responsive System
+   RESPONSIVE — Inner Pages
+   Breakpoints: 1024px, 768px, 480px, 360px
    ===================================================== */
 
-/* ── 1024px: tablet landscape ── */
+/* ---- 1024px — Tablet landscape ---- */
 @media (max-width: 1024px) {
   /* Page hero */
-  .page-hero { padding: 110px 0 60px; }
-  .page-hero h1 { font-size: clamp(1.7rem, 4vw, 2.6rem); }
+  .page-hero { padding: 110px 0 64px; }
 
-  /* Services inner page */
-  .service-detail { padding: 72px 0; }
-  .service-detail-inner {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-  /* Flip order on alt sections so text comes first */
+  /* Services detail */
+  .service-detail { padding: 80px 0; }
+  .service-detail-inner { grid-template-columns: 1fr; gap: 40px; }
   .service-detail-alt .service-detail-inner { direction: ltr; }
-  .detail-card { max-width: 400px; margin: 0 auto; width: 100%; }
+  .service-detail-visual { order: -1; }
+  .detail-card { padding: 32px; text-align: center; }
+  .detail-price strong { font-size: 1.3rem; }
 
   /* About */
-  .about-story-inner { grid-template-columns: 1fr; gap: 40px; }
-  .values-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .about-story { padding: 80px 0; }
+  .about-story-inner { grid-template-columns: 1fr; gap: 48px; }
+  .about-values { padding: 80px 0; }
+  .values-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
   .team-grid { grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
 
   /* Portfolio */
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-    max-width: 560px;
-    margin: 0 auto;
-  }
+  .portfolio-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
 
   /* Blog */
   .blog-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
 
   /* Contact */
-  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-  .contact-info { max-width: 560px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .contact-info { order: 1; }
+  .lead-form-box[id="contact-form"] { order: 0; }
+
+  /* Process steps */
+  .process-steps { flex-wrap: wrap; gap: 16px; overflow-x: visible; }
+  .process-arrow { display: none; }
+  .process-step { flex: 1 1 calc(50% - 16px); }
 }
 
-/* ── 768px: tablet portrait ── */
+/* ---- 768px — Tablet portrait / large phone ---- */
 @media (max-width: 768px) {
   /* Page hero */
-  .page-hero { padding: 90px 0 48px; text-align: left; }
-  .page-hero p { font-size: 1rem; }
+  .page-hero { padding: 90px 0 48px; }
+  .page-hero h1 { font-size: clamp(1.8rem, 6vw, 2.4rem); }
+  .page-hero p { font-size: 0.95rem; }
 
-  /* Services */
+  /* Service detail */
   .service-detail { padding: 56px 0; }
-  .detail-card { padding: 28px 20px; }
-  .detail-list li { font-size: 0.875rem; }
+  .service-detail-inner { gap: 32px; }
+  .detail-card { padding: 28px 24px; }
+  .detail-list li { font-size: 0.9rem; padding: 8px 0; }
+  .service-detail-text p { font-size: 0.95rem; }
 
-  /* About */
-  .values-grid { grid-template-columns: 1fr; gap: 10px; }
-  .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  /* About story */
+  .about-story { padding: 56px 0; }
+  .about-story-inner { gap: 36px; }
+  .about-story-inner > div:last-child > div[style] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* About values */
+  .about-values { padding: 56px 0; }
+  .values-grid { grid-template-columns: 1fr; gap: 16px; }
   .value-card { padding: 24px; }
+  .value-icon { font-size: 2rem; }
+
+  /* Team */
+  .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .team-avatar { width: 80px; height: 80px; font-size: 1.4rem; }
+
+  /* Process steps (about page) */
+  .process-steps { flex-direction: column; align-items: stretch; }
+  .process-step { flex: unset; width: 100%; min-width: unset; padding: 20px; }
+  .step-num { font-size: 2rem; }
 
   /* Portfolio */
-  .portfolio-grid { max-width: 100%; }
+  .portfolio-grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; gap: 20px; }
+  .portfolio-card { border-radius: var(--radius-md); }
+  .portfolio-visual { height: 140px; }
   .portfolio-content { padding: 20px; }
-  .portfolio-metrics { gap: 12px; }
+  .portfolio-metrics { gap: 12px; flex-wrap: wrap; }
   .pm-num { font-size: 1.1rem; }
 
   /* Blog */
-  .blog-grid { grid-template-columns: 1fr; gap: 14px; }
+  .blog-grid { grid-template-columns: 1fr; gap: 16px; }
+  .blog-card { border-radius: var(--radius-md); }
+  .blog-visual { height: 120px; font-size: 2.2rem; }
   .blog-content { padding: 20px; }
-  .blog-visual { height: 130px; font-size: 2.2rem; }
+  .blog-content h3 { font-size: 1rem; }
 
   /* Contact */
-  .contact-method { gap: 12px; }
-  .contact-method-icon { width: 38px; height: 38px; font-size: 1rem; }
-  .map-placeholder { height: 160px; font-size: 0.8rem; }
+  .contact-grid { gap: 32px; }
+  .contact-info h3 { margin-bottom: 8px; }
+  .contact-method { padding: 16px 0; gap: 12px; }
+  .contact-method-icon { width: 36px; height: 36px; font-size: 1rem; }
+  .map-placeholder { height: 160px; }
 
-  /* Process (about page) */
-  .process-steps {
-    flex-direction: column;
-    overflow-x: visible;
-  }
-
-  /* Aggregate stats row on portfolio page */
-  [style*="grid-template-columns:repeat(4"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
-  }
+  /* Final CTA on inner pages */
+  .final-cta { padding: 56px 0; }
+  .final-cta-btns { flex-direction: column; align-items: stretch; }
+  .final-cta-btns .btn { width: 100%; justify-content: center; }
 }
 
-/* ── 480px: large mobile ── */
+/* ---- 480px — Mobile ---- */
 @media (max-width: 480px) {
   /* Page hero */
-  .page-hero { padding: 76px 0 40px; }
-  .page-hero h1 { font-size: clamp(1.5rem, 7vw, 2rem); }
-  .page-hero p { font-size: 0.9rem; }
+  .page-hero { padding: 80px 0 40px; }
+  .page-hero h1 { font-size: clamp(1.6rem, 7vw, 2rem); }
 
-  /* Services */
-  .service-detail-text h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
-  .detail-card { padding: 24px 16px; }
-  .detail-price strong { font-size: 1.3rem; }
+  /* Service detail */
+  .service-detail { padding: 48px 0; }
+  .detail-card { padding: 20px 16px; border-radius: var(--radius-md); }
+  .detail-icon { font-size: 2.2rem; }
+  .detail-price strong { font-size: 1.2rem; }
 
-  /* About */
-  .team-grid { grid-template-columns: 1fr; }
-  .team-avatar { width: 80px; height: 80px; font-size: 1.5rem; }
+  /* About story stats grid */
+  .about-story { padding: 48px 0; }
 
-  /* Blog */
-  .blog-content h3 { font-size: 0.95rem; }
+  /* About values */
+  .about-values { padding: 48px 0; }
+  .value-card { padding: 20px; border-radius: var(--radius-md); }
 
-  /* Contact */
-  .contact-info h3 { font-size: 1.2rem; }
-  .contact-info p  { font-size: 0.875rem; margin-bottom: 20px; }
+  /* Team */
+  .team-grid { grid-template-columns: 1fr; gap: 24px; max-width: 320px; margin: 0 auto; }
+  .team-avatar { width: 72px; height: 72px; font-size: 1.2rem; }
 
   /* Portfolio */
-  .portfolio-visual { height: 140px; }
-  .portfolio-metrics { flex-wrap: wrap; gap: 8px; }
+  .portfolio-grid { max-width: 100%; }
+  .portfolio-metrics { gap: 8px; }
 
-  /* Aggregate stats */
-  [style*="grid-template-columns:repeat(4"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+  /* Blog */
+  .blog-visual { height: 100px; font-size: 1.8rem; }
+  .blog-content h3 { font-size: 0.95rem; }
+  .blog-content p { font-size: 0.82rem; }
+
+  /* Contact */
+  .contact-method-icon { width: 32px; height: 32px; font-size: 0.875rem; border-radius: 8px; }
+  .contact-method strong { font-size: 0.8rem; }
+  .contact-method a { font-size: 0.875rem; }
+  .map-placeholder { height: 140px; font-size: 0.8rem; }
+
+  /* Process step on about page */
+  .process-step { padding: 16px; }
+
+  /* Final CTA */
+  .final-cta { padding: 48px 0; }
+  .final-cta-inner h2 { font-size: clamp(1.4rem, 6vw, 1.75rem); }
 }
 
-/* ── 375px: small mobile ── */
-@media (max-width: 375px) {
+/* ---- 360px — Small mobile ---- */
+@media (max-width: 360px) {
+  .page-hero { padding: 72px 0 36px; }
   .page-hero h1 { font-size: 1.5rem; }
-  .service-detail-text h2 { font-size: 1.35rem; }
-  .detail-list li { font-size: 0.82rem; }
-  .blog-content h3 { font-size: 0.9rem; }
-  .team-grid { grid-template-columns: 1fr; }
-  .values-grid { grid-template-columns: 1fr; }
+  .detail-card { padding: 16px; }
+  .team-grid { max-width: 280px; }
+  .blog-content { padding: 16px; }
+  .contact-method { gap: 10px; }
+  .value-card { padding: 16px; }
 }
